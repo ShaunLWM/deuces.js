@@ -1,0 +1,11 @@
+{
+  "name": "deuces.js",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@github.com:ShaunLWM/deuces.js.git",
+  "author": "ShaunLWM",
+  "license": "MIT",
+  "dependencies": {
+    "knuth-shuffle-seeded": "^1.0.6"
+  }
+}
