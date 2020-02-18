@@ -44,4 +44,4 @@ console.log(`Player 1 hand rank = ${p1_score} (${evaluator.class_to_string(p1_cl
 console.log(`Player 2 hand rank = ${p2_score} (${evaluator.class_to_string(p2_class)})`)
 
 const hands = [player1_hand, player2_hand]
-console.log(evaluator.hand_summary(board, hands))
+evaluator.hand_summary(board, hands)
