@@ -18,4 +18,4 @@ let hand = [
 Card.print_pretty_cards(board.concat(hand))
 
 rank = evaluator.evaluate(board, hand)
-console.log(rank)
+console.log(`Rank for your hand is: ${rank}`);
