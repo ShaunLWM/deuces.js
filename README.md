@@ -47,12 +47,12 @@ const player1_hand = deck.draw(2);  // player 1 will draw 2 cards
 const player2_hand = deck.draw(2);  // player 2 will draw 2 cards
 
 
-// Print out their drawn cards
-Card.print_pretty_cards(board)
+// Print out their drawn cards. second parameter denotes if you want it to be colored in console
+Card.print_pretty_cards(board, true)
 // > [ 2 ♦ ] , [ 2 ❤ ] , [ K ♣ ] , [ J ♣ ] , [ 9 ❤ ]
-Card.print_pretty_cards(player1_hand)
+Card.print_pretty_cards(player1_hand, true)
 // > [ 5 ♦ ] , [ 2 ♣ ]
-Card.print_pretty_cards(player2_hand)
+Card.print_pretty_cards(player2_hand, true)
 // > [ 7 ♠ ] , [ 7 ❤ ]
 
 
@@ -92,7 +92,6 @@ Player 1 is the winner with a Three of a Kind
 ```
 
 ## Todo
-- Add colors to suits
 - Camelcasing functions
 
 ## Credits
