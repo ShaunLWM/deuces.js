@@ -1,0 +1,235 @@
+/*
+    Number of Distinct Hand Values:
+    Straight Flush   10
+    Four of a Kind   156      [(13 choose 2) * (2 choose 1)]
+    Full Houses      156      [(13 choose 2) * (2 choose 1)]
+    Flush            1277     [(13 choose 5) - 10 straight flushes]
+    Straight         10
+    Three of a Kind  858      [(13 choose 3) * (3 choose 1)]
+    Two Pair         858      [(13 choose 3) * (3 choose 2)]
+    One Pair         2860     [(13 choose 4) * (4 choose 1)]
+    High Card      + 1277     [(13 choose 5) - 10 straights]
+    -------------------------
+    TOTAL            7462
+    Here we create a lookup table which maps:
+        5 card hand's unique prime product => rank in range [1, 7462]
+    Examples:
+    * Royal flush (best hand possible)          => 1
+    * 7-5-4-3-2 unsuited (worst hand possible)  => 7462
+*/
+
+import * as Card from "./Card";
+import * as Helper from "./Helper";
+import range from "fill-range";
+
+export const MAX_STRAIGHT_FLUSH = 10;
+export const MAX_FOUR_OF_A_KIND = 166;
+export const MAX_FULL_HOUSE = 322;
+export const MAX_FLUSH = 1599;
+export const MAX_STRAIGHT = 1609;
+export const MAX_THREE_OF_A_KIND = 2467;
+export const MAX_TWO_PAIR = 3325;
+export const MAX_PAIR = 6185;
+export const MAX_HIGH_CARD = 7462;
+
+export const MAX_TO_RANK_CLASS: Record<string, number> = {
+	MAX_STRAIGHT_FLUSH: 1,
+	MAX_FOUR_OF_A_KIND: 2,
+	MAX_FULL_HOUSE: 3,
+	MAX_FLUSH: 4,
+	MAX_STRAIGHT: 5,
+	MAX_THREE_OF_A_KIND: 6,
+	MAX_TWO_PAIR: 7,
+	MAX_PAIR: 8,
+	MAX_HIGH_CARD: 9,
+};
+
+export const RANK_CLASS_TO_STRING: Record<number, string> = {
+	1: "Straight Flush",
+	2: "Four of a Kind",
+	3: "Full House",
+	4: "Flush",
+	5: "Straight",
+	6: "Three of a Kind",
+	7: "Two Pair",
+	8: "Pair",
+	9: "High Card",
+};
+
+export default class LookupTable {
+	_flushLookup: Record<number, number>;
+	_unsuitedLookup: Record<number, number>;
+
+	constructor() {
+		this._flushLookup = {};
+		this._unsuitedLookup = {};
+		this.flushes();
+		this.multiples();
+	}
+
+	get unsuitedLookup() {
+		return this._unsuitedLookup;
+	}
+
+	set unsuitedLookup(obj) {
+		this._unsuitedLookup = obj;
+	}
+
+	get flushLookup() {
+		return this._flushLookup;
+	}
+
+	set flushLookup(obj) {
+		this._flushLookup = obj;
+	}
+
+	flushes() {
+		const straightFlushes = [
+			7936, // int('0b1111100000000', 2), // royal flush
+			3968, // int('0b111110000000', 2),
+			1984, // int('0b11111000000', 2),
+			992, // int('0b1111100000', 2),
+			496, // int('0b111110000', 2),
+			248, // int('0b11111000', 2),
+			124, // int('0b1111100', 2),
+			62, // int('0b111110', 2),
+			31, // int('0b11111', 2),
+			4111, // int('0b1000000001111', 2) // 5 high
+		];
+
+		const flushes: number[] = [];
+		const gen = this.getLexographicallyNextBitSequence(parseInt("11111", 2));
+
+		for (let _i of [
+			...Array.from(
+				{ length: 1277 + straightFlushes.length - 1 },
+				(_v, i) => i
+			),
+		]) {
+			let f = gen.next().value as number;
+			let notSF = true;
+			for (let sf of straightFlushes) {
+				const result = Number(f ^ sf);
+				if (result < 1) notSF = false;
+			}
+
+			if (notSF) flushes.push(f);
+		}
+
+		flushes.reverse();
+		let rank = 1;
+		for (let sf of straightFlushes) {
+			let prime_product = Card.primeProductFromRankbits(sf);
+			this._flushLookup[prime_product] = rank;
+			rank += 1;
+		}
+
+		rank = MAX_FULL_HOUSE + 1;
+		for (let f of flushes) {
+			let prime_product = Card.primeProductFromRankbits(f);
+			this._flushLookup[prime_product] = rank;
+			rank += 1;
+		}
+
+		this.straightAndHighcards(straightFlushes, flushes);
+	}
+
+	straightAndHighcards(straights: number[], highcards: number[]) {
+		let rank = MAX_FLUSH + 1;
+		for (let s of straights) {
+			let prime_product = Card.primeProductFromRankbits(s);
+			this._unsuitedLookup[prime_product] = rank;
+			rank += 1;
+		}
+
+		rank = MAX_PAIR + 1;
+		for (let h of highcards) {
+			let prime_product = Card.primeProductFromRankbits(h);
+			this._unsuitedLookup[prime_product] = rank;
+			rank += 1;
+		}
+	}
+
+	multiples() {
+		let backwards_ranks = range(Card.INT_RANKS.length - 1, 0, -1);
+		let rank = MAX_STRAIGHT_FLUSH + 1;
+		for (const i of backwards_ranks) {
+			const kickers = backwards_ranks.slice(0);
+			kickers.splice(kickers.indexOf(i), 1);
+			for (const k of kickers) {
+				const product = Card.PRIMES[i] ** 4 * Card.PRIMES[k];
+				this._unsuitedLookup[product] = rank;
+				rank += 1;
+			}
+		}
+
+		rank = MAX_FOUR_OF_A_KIND + 1;
+		for (const i of backwards_ranks) {
+			const pairranks = backwards_ranks.slice(0);
+			pairranks.splice(pairranks.indexOf(i), 1);
+			for (const pr of pairranks) {
+				const product = Card.PRIMES[i] ** 3 * Card.PRIMES[pr] ** 2;
+				this._unsuitedLookup[product] = rank;
+				rank += 1;
+			}
+		}
+
+		rank = MAX_STRAIGHT + 1;
+		for (const r of backwards_ranks) {
+			const kickers = backwards_ranks.slice(0);
+			kickers.splice(kickers.indexOf(r), 1);
+			const gen = Helper.permutate(kickers, 2);
+			for (const k of gen) {
+				const [c1, c2] = k;
+				const product = Card.PRIMES[r] ** 3 * Card.PRIMES[c1] * Card.PRIMES[c2];
+				this._unsuitedLookup[product] = rank;
+				rank += 1;
+			}
+		}
+
+		rank = MAX_THREE_OF_A_KIND + 1;
+		const tpgen = Helper.permutate(backwards_ranks, 2);
+		for (const tp of tpgen) {
+			const [pair1, pair2] = tp;
+			const kickers = backwards_ranks.slice(0);
+			kickers.splice(kickers.indexOf(pair1), 1);
+			kickers.splice(kickers.indexOf(pair2), 1);
+			for (const kicker of kickers) {
+				const product =
+					Card.PRIMES[pair1] ** 2 *
+					Card.PRIMES[pair2] ** 2 *
+					Card.PRIMES[kicker];
+				this._unsuitedLookup[product] = rank;
+				rank += 1;
+			}
+		}
+
+		rank = MAX_TWO_PAIR + 1;
+		for (const pairrank of backwards_ranks) {
+			const kickers = backwards_ranks.slice(0);
+			kickers.splice(kickers.indexOf(pairrank), 1);
+			const kgen = Helper.permutate(kickers, 3);
+			for (const kicks of kgen) {
+				const [k1, k2, k3] = kicks;
+				const product =
+					Card.PRIMES[pairrank] ** 2 *
+					Card.PRIMES[k1] *
+					Card.PRIMES[k2] *
+					Card.PRIMES[k3];
+				this._unsuitedLookup[product] = rank;
+				rank += 1;
+			}
+		}
+	}
+
+	*getLexographicallyNextBitSequence(bits: number) {
+		let t = (bits | (bits - 1)) + 1;
+		let next = t | ((((t & -t) / (bits & -bits)) >> 1) - 1);
+		yield next;
+		while (true) {
+			t = (next | (next - 1)) + 1;
+			next = t | ((((t & -t) / (next & -next)) >> 1) - 1);
+			yield next;
+		}
+	}
+}

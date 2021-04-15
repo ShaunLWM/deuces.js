@@ -1,12 +1,64 @@
 {
-  "name": "deuces.js",
-  "version": "0.0.2",
-  "main": "index.js",
-  "repository": "git@github.com:ShaunLWM/deuces.js.git",
-  "author": "ShaunLWM",
+  "version": "0.1.0",
   "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "es5",
+    "useTabs": true
+  },
+  "name": "tmp",
+  "module": "dist/tmp.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/tmp.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/tmp.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^4.10.2",
+    "@types/lodash.zip": "^4.2.6",
+    "husky": "^6.0.0",
+    "jest-extended": "^0.11.5",
+    "size-limit": "^4.10.2",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.2.0",
+    "typescript": "^4.2.4"
+  },
+  "repository": "git@github.com:ShaunLWM/deuces.js.git",
+  "homepage": "https://github.com/ShaunLWM/deuces.js",
   "dependencies": {
-    "chalk": "^3.0.0",
-    "knuth-shuffle-seeded": "^1.0.6"
+    "fill-range": "^7.0.1",
+    "knuth-shuffle-seeded": "^1.0.6",
+    "lodash.zip": "^4.2.0"
   }
 }
