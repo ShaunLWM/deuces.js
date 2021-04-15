@@ -49,8 +49,8 @@ export default class Evaluator {
 
 	_six(cards: number[]) {
 		let minimum = MAX_HIGH_CARD;
-		const all5cardcombobs = Helper.permutate(cards, 5);
-		for (const combo of all5cardcombobs) {
+		const all5cardcombob = Helper.permutate(cards, 5);
+		for (const combo of all5cardcombob) {
 			const score = this._five(combo);
 			if (score < minimum) minimum = score;
 		}
@@ -60,8 +60,8 @@ export default class Evaluator {
 
 	_seven(cards: number[]) {
 		let minimum = MAX_HIGH_CARD;
-		const all5cardcombobs = Helper.permutate(cards, 5);
-		for (const combo of all5cardcombobs) {
+		const all5cardcombob = Helper.permutate(cards, 5);
+		for (const combo of all5cardcombob) {
 			const score = this._five(combo);
 			if (score < minimum) minimum = score;
 		}
@@ -100,11 +100,11 @@ export default class Evaluator {
 			if (hand.length !== 2) return console.log("Invalid hand length");
 		}
 
-		const line_length = 10;
+		const lineLength = 10;
 		const stages = ["FLOP", "TURN", "RIVER"];
 		for (const i of range(0, stages.length - 1)) {
 			console.log(
-				`${"=".repeat(line_length)} ${stages[i]} ${"=".repeat(line_length)}`
+				`${"=".repeat(lineLength)} ${stages[i]} ${"=".repeat(lineLength)}`
 			);
 			let bestRank = 7463;
 			let winners: number[] = [];
@@ -136,7 +136,7 @@ export default class Evaluator {
 					);
 			} else {
 				console.log(
-					`${"=".repeat(line_length)} HAND OVER ${"=".repeat(line_length)}`
+					`${"=".repeat(lineLength)} HAND OVER ${"=".repeat(lineLength)}`
 				);
 				if (winners.length === 1)
 					console.log(
@@ -160,5 +160,3 @@ export default class Evaluator {
 		}
 	}
 }
-
-module.exports = Evaluator;

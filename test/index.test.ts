@@ -7,8 +7,6 @@ let evaluator = new Evaluator();
 
 describe("Full poker evaluation test", () => {
 	it("should generate new deck of cards", () => {
-		// let card = Card.newCard("Qh");
-
 		let board = [Card.newCard("2h"), Card.newCard("2s"), Card.newCard("Jc")];
 		let hand = [Card.newCard("Qs"), Card.newCard("Th")];
 		const output = Card.printPrettyCards(board.concat(hand));

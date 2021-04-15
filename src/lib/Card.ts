@@ -44,9 +44,9 @@ export function getRankInt(cardInt: number) {
 }
 
 export function intToStr(cardInt: number) {
-	const rank_int = getRankInt(cardInt);
-	const suit_int = getSuitInt(cardInt);
-	return STR_RANKS[rank_int] + INT_SUIT_TO_CHAR_SUIT[suit_int];
+	const rankInt = getRankInt(cardInt);
+	const suitInt = getSuitInt(cardInt);
+	return STR_RANKS[rankInt] + INT_SUIT_TO_CHAR_SUIT[suitInt];
 }
 
 export function getSuitInt(cardInt: number) {
@@ -59,9 +59,7 @@ export function getPrime(cardInt: number) {
 	return cardInt & 0x3f;
 }
 export function handToBinary(cardStrs: string[]) {
-	return cardStrs.map(c => {
-		return newCard(c);
-	});
+	return cardStrs.map(c => newCard(c));
 }
 export function primeProductFromHand(cardInts: number[]) {
 	return cardInts.reduce((acc, cur) => (acc *= cur & 0xff), 1);

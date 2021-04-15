@@ -1,8 +1,8 @@
-import { CHAR_SUIT_TO_INT_SUIT, STR_RANKS, newCard } from "./Card";
+import * as Card from "./Card";
 import shuffle from "knuth-shuffle-seeded";
 
 export default class Deck {
-	cards: number[];
+	cards: number[] = [];
 
 	constructor() {
 		this.cards = shuffle(this.getFullDeck());
@@ -17,16 +17,16 @@ export default class Deck {
 	}
 
 	getFullDeck(): number[] {
-		if (this.cards && this.cards.length > 0) {
+		if (this.cards.length > 0) {
 			return this.cards;
 		}
 
 		this.cards = [];
-		const rank_split = STR_RANKS.split("");
-		for (let i = 0; i < rank_split.length; i += 1) {
-			const rank = rank_split[i];
-			Object.entries(CHAR_SUIT_TO_INT_SUIT).forEach(([key]) =>
-				this.cards.push(newCard(`${rank}${key}`))
+		const rankSplit = Card.STR_RANKS.split("");
+		for (let i = 0; i < rankSplit.length; i += 1) {
+			const rank = rankSplit[i];
+			Object.entries(Card.CHAR_SUIT_TO_INT_SUIT).forEach(([key]) =>
+				this.cards.push(Card.newCard(`${rank}${key}`))
 			);
 		}
 
