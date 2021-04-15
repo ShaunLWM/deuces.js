@@ -8,7 +8,6 @@ const CHAR_RANK_TO_INT_RANK: { [key: string]: number } = dict(
 	zip(STR_RANKS.split(""), INT_RANKS)
 );
 
-type SHDC = "s" | "h" | "d" | "c";
 export const CHAR_SUIT_TO_INT_SUIT: Record<SHDC, number> = {
 	s: 1, // spades
 	h: 2, // hearts
@@ -17,7 +16,8 @@ export const CHAR_SUIT_TO_INT_SUIT: Record<SHDC, number> = {
 };
 
 const INT_SUIT_TO_CHAR_SUIT = "xshxdxxxc";
-const PRETTY_SUITS: Record<number, string> = {
+
+const PRETTY_SUITS: Record<PrettySuitKey, string> = {
 	1: decodeURIComponent("\u2660"), // spades
 	2: decodeURIComponent("\u2764"), // hearts
 	4: decodeURIComponent("\u2666"), // diamonds
@@ -75,10 +75,10 @@ export function primeProductFromRankbits(rankbits: number) {
 
 // @ts-ignore
 export function intToPrettyStr(cardInt: number, color = false) {
-	const suit_int = getSuitInt(cardInt);
-	const rank_int = getRankInt(cardInt);
-	let s = PRETTY_SUITS[suit_int];
-	const r = STR_RANKS[rank_int];
+	const suitInt = getSuitInt(cardInt) as PrettySuitKey;
+	const rankInt = getRankInt(cardInt);
+	let s = PRETTY_SUITS[suitInt];
+	const r = STR_RANKS[rankInt];
 	// if (color && PRETTY_REDS.includes(suit_int)) s = chalk.red(s);
 	return `[${r}${s}]`;
 }
