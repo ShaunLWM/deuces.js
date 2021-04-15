@@ -37,15 +37,12 @@ export default class Evaluator {
 
 	_five(cards: number[]) {
 		if (cards[0] & cards[1] & cards[2] & cards[3] & cards[4] & 0xf000) {
-			console.log(`here 1`);
 			const handOR =
 				(cards[0] | cards[1] | cards[2] | cards[3] | cards[4]) >> 16;
 			const prime = Card.primeProductFromRankbits(handOR);
 			return this.table.flushLookup[prime];
 		} else {
-			console.log(`here 2`);
 			const prime = Card.primeProductFromHand(cards);
-			console.log(prime);
 			return this.table.unsuitedLookup[prime];
 		}
 	}
@@ -105,7 +102,7 @@ export default class Evaluator {
 
 		const line_length = 10;
 		const stages = ["FLOP", "TURN", "RIVER"];
-		for (const i of range(1, stages.length + 1)) {
+		for (const i of range(0, stages.length - 1)) {
 			console.log(
 				`${"=".repeat(line_length)} ${stages[i]} ${"=".repeat(line_length)}`
 			);
